@@ -38,7 +38,7 @@ public final class Board extends JPanel implements Observer {
      * It is used in the switch statement in order to switch to Normal board
      */
     public static final int NORMAL_BOARD = 2;
-    private int currentBoard = NORMAL_BOARD;
+    private CurrentBoard currentBoard = new NormalBoard();
     private boolean isWhite = true;
     private ArrayList<Square> squares;
     private HashMap<String, String> imageMap = new HashMap<String, String>();
@@ -220,8 +220,9 @@ public final class Board extends JPanel implements Observer {
      * @param currentBoard as an integer
      */
     public void setBoard(int currentBoard) {
-        this.currentBoard = currentBoard;
+        this.setCurrentBoard(currentBoard);
     }
+
 
     /**
      * The method flipBoard simply flips the board to normal
@@ -229,38 +230,20 @@ public final class Board extends JPanel implements Observer {
      */
     public void flipBoard() {
 
-        //SWITCH STATEMENT FOR CURRENT BOARD VARIABLE IT'S EITHER NORMAL OR FLIPPED
-        switch (this.currentBoard) {
-
-            //IF NORMAL_BOARD EXECUTE THE CASE STATEMENT
-            case Board.NORMAL_BOARD:
-                for (int i = 0; i < squares.size(); i++) {
-                    squares.get(i).setBounds((int) (455 - squares.get(i).getBounds().getX()), (int) (455 - squares.get(i).getBounds().getY()), 65, 65);
-                    squares.get(i).repaint();
-                    this.add(squares.get(i));
-                }
-                break;
-
-            //IF FLIPPED_BOARD EXECUTE THE CASE STATEMENT
-            case Board.FLIPPED_BOARD:
-                for (int i = squares.size() - 1; i > -1; i--) {
-                    squares.get(i).setBounds((int) (455 - squares.get(i).getBounds().getX()), (int) (455 - squares.get(i).getBounds().getY()), 65, 65);
-                    squares.get(i).repaint();
-                    this.add(squares.get(i));
-                }
-                break;
-        }
+        currentBoard.flipBoard(this);
         this.revalidate();
         this.repaint();
     }
+
 
     /**
      * The method getCurrentBoard simply returns the current board to the caller
      * @return currentBoard as an integer
      */
     public int getCurrentBoard() {
-        return currentBoard;
+        return currentBoard.getCurrentBoard();
     }
+
 
     /**
      * The method setCurrentBoard sets the current board
@@ -268,8 +251,19 @@ public final class Board extends JPanel implements Observer {
      * @param currentBoard as an integer
      */
     public void setCurrentBoard(int currentBoard) {
-        this.currentBoard = currentBoard;
+        switch (currentBoard) {
+		case NORMAL_BOARD:
+			this.currentBoard = new NormalBoard();
+			break;
+		case FLIPPED_BOARD:
+			this.currentBoard = new FlippedBoard();
+			break;
+		default:
+			this.currentBoard = null;
+			break;
+		}
     }
+
 
     /**
      * The method distributeListeners simply distribute listeners
